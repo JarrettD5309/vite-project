@@ -1,59 +1,79 @@
 import { ReactElement } from "react";
 import { BookListItem, WelcomeObj } from "./interfaces/types";
 
-const list: BookListItem[] = [
-  {
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan White',
-    num_comments: 3,
-    points: 4,
-    objectID: 0
-  },
-  {
-    title: 'Redux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1
-  }
-];
-
 const welcome: WelcomeObj = {
   greeting: 'Hey',
   title: 'React'
 };
 
-function getTitle(title: string): string {
-  return title;
-}
+const getTitle = (title: string): string => title;
 
-function App(): ReactElement {
+
+const App = (): ReactElement => {
+
+  const stories: BookListItem[] = [
+    {
+      title: 'React',
+      url: 'https://reactjs.org/',
+      author: 'Jordan White',
+      num_comments: 3,
+      points: 4,
+      objectID: 0
+    },
+    {
+      title: 'Redux',
+      url: 'https://redux.js.org/',
+      author: 'Dan Abramov, Andrew Clark',
+      num_comments: 2,
+      points: 5,
+      objectID: 1
+    }
+  ];
 
   return (
     <div>
       <h1>{welcome.greeting} {welcome.title}</h1>
       <h1>{getTitle('Hello World')}</h1>
-      <label htmlFor="search">Search: </label>
-      <input id="search" type="text" />
+
+      <Search />
 
       <hr />
 
-      <ul>
-        {list.map((item: BookListItem): ReactElement => (
-          <li key={item.objectID}>
-            <span>
-              <a href={item.url}>{item.title} </a>
-            </span>
-            <span>{item.author} </span>
-            <span>{item.num_comments} </span>
-            <span>{item.points}</span>
-          </li>
-        ))}
-      </ul>
+      <List list={stories} />
+
     </div>
   );
-}
+};
+
+const List = (props: { list: BookListItem[] }): ReactElement => (
+  <ul>
+    {props.list.map((item: BookListItem): ReactElement => (
+      <Item key={item.objectID} item={item} />
+    ))}
+  </ul>
+);
+
+const Item = (props: { item: BookListItem }): ReactElement => (
+  <li>
+    <span>
+      <a href={props.item.url}>{props.item.title} </a>
+    </span>
+    <span>{props.item.author} </span>
+    <span>{props.item.num_comments} </span>
+    <span>{props.item.points}</span>
+  </li>
+);
+
+const Search = (): ReactElement => {
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => console.log(event.target.value);
+
+  return (
+    <div>
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" onChange={handleChange} />
+    </div>
+  );
+};
 
 export default App;
