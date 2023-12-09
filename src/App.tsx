@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { BookListItem, WelcomeObj } from "./interfaces/types";
 
 const welcome: WelcomeObj = {
@@ -66,12 +66,16 @@ const Item = (props: { item: BookListItem }): ReactElement => (
 
 const Search = (): ReactElement => {
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => console.log(event.target.value);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(event.target.value);
 
   return (
     <div>
       <label htmlFor="search">Search: </label>
       <input id="search" type="text" onChange={handleChange} />
+
+      <p>Searching for <strong>{searchTerm}</strong></p>
     </div>
   );
 };
