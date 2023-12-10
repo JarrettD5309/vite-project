@@ -1,5 +1,5 @@
 import { ReactElement, useState } from "react";
-import { BookListItem, WelcomeObj } from "./interfaces/types";
+import { BookListItem, ItemProps, ListProps, SearchProps, WelcomeObj } from "./interfaces/types";
 
 const welcome: WelcomeObj = {
   greeting: 'Hey',
@@ -30,22 +30,28 @@ const App = (): ReactElement => {
     }
   ];
 
+  const [searchTerm, setSearchTerm] = useState<string>("React");
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => setSearchTerm(event.target.value);
+
+  const searchedStories: BookListItem[] = stories.filter((story: BookListItem): boolean => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
   return (
     <div>
       <h1>{welcome.greeting} {welcome.title}</h1>
       <h1>{getTitle('Hello World')}</h1>
 
-      <Search />
+      <Search search={searchTerm} onSearch={handleSearch} />
 
       <hr />
 
-      <List list={stories} />
+      <List list={searchedStories} />
 
     </div>
   );
 };
 
-const List = (props: { list: BookListItem[] }): ReactElement => (
+const List = (props: ListProps): ReactElement => (
   <ul>
     {props.list.map((item: BookListItem): ReactElement => (
       <Item key={item.objectID} item={item} />
@@ -53,7 +59,7 @@ const List = (props: { list: BookListItem[] }): ReactElement => (
   </ul>
 );
 
-const Item = (props: { item: BookListItem }): ReactElement => (
+const Item = (props: ItemProps): ReactElement => (
   <li>
     <span>
       <a href={props.item.url}>{props.item.title} </a>
@@ -64,20 +70,18 @@ const Item = (props: { item: BookListItem }): ReactElement => (
   </li>
 );
 
-const Search = (): ReactElement => {
+const Search = (props: SearchProps): ReactElement => (
+  <div>
+    <label htmlFor="search">Search: </label>
+    <input
+      id="search"
+      type="text"
+      value={props.search}
+      onChange={props.onSearch}
+    />
 
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(event.target.value);
-
-  return (
-    <div>
-      <label htmlFor="search">Search: </label>
-      <input id="search" type="text" onChange={handleChange} />
-
-      <p>Searching for <strong>{searchTerm}</strong></p>
-    </div>
-  );
-};
+    {/* <p>Searching for <strong>{searchTerm}</strong></p> */}
+  </div>
+);
 
 export default App;
