@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { BookListItem, ItemProps, ListProps, SearchProps, WelcomeObj } from "./interfaces/types";
 
 const welcome: WelcomeObj = {
@@ -7,6 +7,18 @@ const welcome: WelcomeObj = {
 };
 
 const getTitle = (title: string): string => title;
+
+const useSemiPersistentState = (key: string, initialState: string): [string, React.Dispatch<React.SetStateAction<string>>] => {
+  const [value, setValue] = useState<string>(
+    localStorage.getItem(key) || initialState
+  );
+
+  useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [value, key]);
+
+  return [value, setValue];
+};
 
 
 const App = (): ReactElement => {
@@ -30,9 +42,10 @@ const App = (): ReactElement => {
     }
   ];
 
-  const [searchTerm, setSearchTerm] = useState<string>("React");
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => setSearchTerm(event.target.value);
+
 
   const searchedStories: BookListItem[] = stories.filter((story: BookListItem): boolean => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
