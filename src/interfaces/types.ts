@@ -15,9 +15,12 @@ export interface ListProps {
   list: BookListItem[]
 }
 
-export interface SearchProps {
-  search: string;
-  onSearch: (e: React.ChangeEvent<HTMLInputElement>) => void
+export interface InputWithLabelProps {
+  id: string;
+  value: string;
+  isFocused: boolean;
+  type?: string;
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export interface WelcomeObj {

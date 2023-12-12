@@ -1,5 +1,5 @@
-import { ReactElement, useEffect, useState } from "react";
-import { BookListItem, ItemProps, ListProps, SearchProps, WelcomeObj } from "./interfaces/types";
+import { PropsWithChildren, ReactElement, useEffect, useRef, useState } from "react";
+import { BookListItem, InputWithLabelProps, ItemProps, ListProps, WelcomeObj } from "./interfaces/types";
 
 const welcome: WelcomeObj = {
   greeting: 'Hey',
@@ -50,17 +50,24 @@ const App = (): ReactElement => {
   const searchedStories: BookListItem[] = stories.filter((story: BookListItem): boolean => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <div>
+    <>
       <h1>{welcome.greeting} {welcome.title}</h1>
       <h1>{getTitle('Hello World')}</h1>
 
-      <Search search={searchTerm} onSearch={handleSearch} />
+      <InputWithLabel
+        id="search"
+        value={searchTerm}
+        isFocused
+        onInputChange={handleSearch}
+      >
+        <strong>Search:</strong>
+      </InputWithLabel>
 
       <hr />
 
       <List list={searchedStories} />
 
-    </div>
+    </>
   );
 };
 
@@ -83,16 +90,29 @@ const Item = ({ item }: ItemProps): ReactElement => (
   </li>
 );
 
-const Search = ({ search, onSearch }: SearchProps): ReactElement => (
-  <div>
-    <label htmlFor="search">Search: </label>
-    <input
-      id="search"
-      type="text"
-      value={search}
-      onChange={onSearch}
-    />
-  </div>
-);
+const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, children }: PropsWithChildren<InputWithLabelProps>): ReactElement => {
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  return (
+    <>
+      <label htmlFor={id}>{children}</label>
+      &nbsp;
+      <input
+        ref={inputRef}
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+      />
+    </>
+  );
+};
 
 export default App;
