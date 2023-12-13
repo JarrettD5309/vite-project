@@ -8,11 +8,13 @@ export interface BookListItem {
 }
 
 export interface ItemProps {
-  item: BookListItem
+  item: BookListItem;
+  onRemoveItem: (item: BookListItem) => void;
 }
 
 export interface ListProps {
-  list: BookListItem[]
+  list: BookListItem[];
+  onRemoveItem: (item: BookListItem) => void;
 }
 
 export interface InputWithLabelProps {
@@ -21,6 +23,12 @@ export interface InputWithLabelProps {
   isFocused: boolean;
   type?: string;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+export interface ResultData {
+  data: {
+    stories: BookListItem[]
+  }
 }
 
 export interface WelcomeObj {
