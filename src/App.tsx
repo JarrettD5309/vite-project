@@ -1,5 +1,5 @@
-import { PropsWithChildren, ReactElement, useEffect, useRef, useState } from "react";
-import { BookListItem, InputWithLabelProps, ItemProps, ListProps, ResultData, WelcomeObj } from "./interfaces/types";
+import { PropsWithChildren, ReactElement, useEffect, useReducer, useRef, useState } from "react";
+import { BookListItem, InputWithLabelProps, ItemProps, ListProps, ResultData, StoryAction, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 
 const welcome: WelcomeObj = {
   greeting: 'Hey',
@@ -26,14 +26,54 @@ const initialStories: BookListItem[] = [
 ];
 
 const getAsyncStories = (): Promise<ResultData> =>
-  new Promise((resolve) =>
+  new Promise((resolve, reject) =>
     setTimeout(
-      () => resolve({ data: { stories: initialStories } }),
+      // () => resolve({ data: { stories: initialStories } }),
+      reject,
       2000
     )
   );
 
 const getTitle = (title: string): string => title;
+
+const storiesReducer = (state: StoryReducerObj, action: { type: StoryAction, payload?: BookListItem[] }): StoryReducerObj => {
+  const actionType = action.type;
+  if (actionType === StoryAction.STORIES_FETCH_INIT) {
+    return {
+      ...state,
+      isLoading: true,
+      isError: false
+    };
+  } else if (action.payload && actionType === StoryAction.STORIES_FETCH_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      isError: false,
+      data: action.payload
+    };
+  } else if (actionType === StoryAction.STORIES_FETCH_FAILURE) {
+    return {
+      ...state,
+      isLoading: false,
+      isError: true
+    };
+  } else if (action.payload && actionType === StoryAction.REMOVE_STORY) {
+    const storyFilter = (story: BookListItem): boolean => {
+      if (action.payload) {
+        return action.payload[0].objectID !== story.objectID;
+      } else {
+        return false;
+      }
+    };
+
+    return {
+      ...state,
+      data: state.data.filter(storyFilter)
+    };
+  } else {
+    throw new Error();
+  }
+};
 
 const useSemiPersistentState = (key: string, initialState: string): [string, React.Dispatch<React.SetStateAction<string>>] => {
   const [value, setValue] = useState<string>(
@@ -51,33 +91,32 @@ const useSemiPersistentState = (key: string, initialState: string): [string, Rea
 const App = (): ReactElement => {
 
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
-  const [stories, setStories] = useState<BookListItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [stories, dispatchStories] = useReducer(storiesReducer, { data: [], isLoading: false, isError: false });
 
   useEffect(() => {
-    setIsLoading(true);
+    dispatchStories({ type: StoryAction.STORIES_FETCH_INIT });
 
     getAsyncStories()
       .then((result: ResultData) => {
-        setStories(result.data.stories);
-        setIsLoading(false);
+        dispatchStories({
+          type: StoryAction.STORIES_FETCH_SUCCESS,
+          payload: result.data.stories
+        });
       })
-      .catch(() => setIsError(true));
+      .catch(() => dispatchStories({ type: StoryAction.STORIES_FETCH_FAILURE }));
   }, []);
 
   const handleRemoveStory = (item: BookListItem): void => {
-    const newStories = stories.filter(
-      (story: BookListItem): boolean => item.objectID !== story.objectID
-    );
-
-    setStories(newStories);
+    dispatchStories({
+      type: StoryAction.REMOVE_STORY,
+      payload: [item]
+    });
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => setSearchTerm(event.target.value);
 
 
-  const searchedStories: BookListItem[] = stories.filter((story: BookListItem): boolean => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  const searchedStories: BookListItem[] = stories.data.filter((story: BookListItem): boolean => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <>
@@ -94,9 +133,9 @@ const App = (): ReactElement => {
       </InputWithLabel>
 
       <hr />
-      {isError && <p>Something went wrong...</p>}
+      {stories.isError && <p>Something went wrong...</p>}
 
-      {isLoading ? (
+      {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
         <List list={searchedStories} onRemoveItem={handleRemoveStory} />

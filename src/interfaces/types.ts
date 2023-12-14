@@ -31,7 +31,20 @@ export interface ResultData {
   }
 }
 
+export interface StoryReducerObj {
+  data: BookListItem[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
 export interface WelcomeObj {
   greeting: string;
   title: string;
+}
+
+export enum StoryAction {
+  REMOVE_STORY = 'REMOVE_STORY',
+  STORIES_FETCH_INIT = 'STORIES_FETCH_INIT',
+  STORIES_FETCH_FAILURE = 'STORIES_FETCH_FAILURE',
+  STORIES_FETCH_SUCCESS = 'STORIES_FETCH_SUCCESS'
 }
