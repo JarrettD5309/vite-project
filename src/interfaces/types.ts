@@ -25,12 +25,6 @@ export interface InputWithLabelProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export interface ResultData {
-  data: {
-    stories: BookListItem[]
-  }
-}
-
 export interface StoryReducerObj {
   data: BookListItem[];
   isLoading: boolean;
