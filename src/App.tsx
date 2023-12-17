@@ -1,5 +1,6 @@
 import { PropsWithChildren, ReactElement, useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { BookListItem, InputWithLabelProps, ItemProps, ListProps, StoryAction, StoryReducerObj, WelcomeObj } from "./interfaces/types";
+import { BookListItem, InputWithLabelProps, ItemProps, ListProps, SearchFormProps, StoryAction, StoryReducerObj, WelcomeObj } from "./interfaces/types";
+import axios from "axios";
 
 const API_ENDPOINT: string = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -71,21 +72,26 @@ const App = (): ReactElement => {
 
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => setSearchTerm(event.target.value);
 
-  const handleSearchSubmit = (): void => setUrl(`${API_ENDPOINT}${searchTerm}`);
+  const handleSearchSubmit = (event: React.ChangeEvent<HTMLFormElement>): void => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
 
-  const handleFetchStories = useCallback(() => {
+    event.preventDefault;
+  };
+
+  const handleFetchStories = useCallback(async () => {
 
     dispatchStories({ type: StoryAction.STORIES_FETCH_INIT });
 
-    fetch(url)
-      .then((res) => res.json())
-      .then((result) => {
-        dispatchStories({
-          type: StoryAction.STORIES_FETCH_SUCCESS,
-          payload: result.hits
-        });
-      })
-      .catch(() => dispatchStories({ type: StoryAction.STORIES_FETCH_FAILURE }));
+    try {
+      const result = await axios.get(url);
+
+      dispatchStories({
+        type: StoryAction.STORIES_FETCH_SUCCESS,
+        payload: result.data.hits
+      });
+    } catch {
+      dispatchStories({ type: StoryAction.STORIES_FETCH_FAILURE });
+    }
 
   }, [url]);
 
@@ -107,20 +113,11 @@ const App = (): ReactElement => {
       <h1>{welcome.greeting} {welcome.title}</h1>
       <h1>{getTitle('Hello World')}</h1>
 
-      <InputWithLabel
-        id="search"
-        value={searchTerm}
-        isFocused
-        onInputChange={handleSearchInput}
-      >
-        <strong>Search:</strong>
-      </InputWithLabel>
-
-      <button
-        type="button"
-        disabled={!searchTerm}
-        onClick={handleSearchSubmit}
-      >Submit</button>
+      <SearchForm
+        searchTerm={searchTerm}
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
+      />
 
       <hr />
       {stories.isError && <p>Something went wrong...</p>}
@@ -181,5 +178,23 @@ const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, ch
     </>
   );
 };
+
+const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormProps): ReactElement => (
+  <form onSubmit={onSearchSubmit}>
+    <InputWithLabel
+      id="search"
+      value={searchTerm}
+      isFocused
+      onInputChange={onSearchInput}
+    >
+      <strong>Search:</strong>
+    </InputWithLabel>
+
+    <button
+      type="submit"
+      disabled={!searchTerm}
+    >Submit</button>
+  </form>
+);
 
 export default App;

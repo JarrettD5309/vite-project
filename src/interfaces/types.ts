@@ -25,6 +25,12 @@ export interface InputWithLabelProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+export interface SearchFormProps {
+  searchTerm: string;
+  onSearchInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void;
+}
+
 export interface StoryReducerObj {
   data: BookListItem[];
   isLoading: boolean;
