@@ -1,4 +1,4 @@
-export interface BookListItem {
+interface BookListItem {
   title: string;
   url: string;
   author: string;
@@ -7,17 +7,17 @@ export interface BookListItem {
   objectID: number;
 }
 
-export interface ItemProps {
+interface ItemProps {
   item: BookListItem;
   onRemoveItem: (item: BookListItem) => void;
 }
 
-export interface ListProps {
+interface ListProps {
   list: BookListItem[];
   onRemoveItem: (item: BookListItem) => void;
 }
 
-export interface InputWithLabelProps {
+interface InputWithLabelProps {
   id: string;
   value: string;
   isFocused: boolean;
@@ -25,26 +25,37 @@ export interface InputWithLabelProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export interface SearchFormProps {
+interface SearchFormProps {
   searchTerm: string;
   onSearchInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSearchSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void;
 }
 
-export interface StoryReducerObj {
+interface StoryReducerObj {
   data: BookListItem[];
   isLoading: boolean;
   isError: boolean;
 }
 
-export interface WelcomeObj {
+interface WelcomeObj {
   greeting: string;
   title: string;
 }
 
-export enum StoryAction {
+enum StoryAction {
   REMOVE_STORY = 'REMOVE_STORY',
   STORIES_FETCH_INIT = 'STORIES_FETCH_INIT',
   STORIES_FETCH_FAILURE = 'STORIES_FETCH_FAILURE',
   STORIES_FETCH_SUCCESS = 'STORIES_FETCH_SUCCESS'
 }
+
+export {
+  type BookListItem,
+  type ItemProps,
+  type ListProps,
+  type InputWithLabelProps,
+  type SearchFormProps,
+  type StoryReducerObj,
+  type WelcomeObj,
+  StoryAction
+};

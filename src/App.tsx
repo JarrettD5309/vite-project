@@ -1,6 +1,7 @@
 import { PropsWithChildren, ReactElement, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { BookListItem, InputWithLabelProps, ItemProps, ListProps, SearchFormProps, StoryAction, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 import axios from "axios";
+import './App.css';
 
 const API_ENDPOINT: string = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -109,9 +110,9 @@ const App = (): ReactElement => {
   };
 
   return (
-    <>
-      <h1>{welcome.greeting} {welcome.title}</h1>
-      <h1>{getTitle('Hello World')}</h1>
+    <div className="container">
+      <h1 className="headline-primary">{welcome.greeting} {welcome.title}</h1>
+      <h1 className="headline-primary">{getTitle('Hello World')}</h1>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -119,7 +120,6 @@ const App = (): ReactElement => {
         onSearchSubmit={handleSearchSubmit}
       />
 
-      <hr />
       {stories.isError && <p>Something went wrong...</p>}
 
       {stories.isLoading ? (
@@ -128,7 +128,7 @@ const App = (): ReactElement => {
         <List list={stories.data} onRemoveItem={handleRemoveStory} />
       )}
 
-    </>
+    </div>
   );
 };
 
@@ -141,15 +141,21 @@ const List = ({ list, onRemoveItem }: ListProps): ReactElement => (
 );
 
 const Item = ({ item, onRemoveItem }: ItemProps): ReactElement => (
-  <li>
-    <span>
+  <li className="item">
+    <span style={{width: '40%'}}>
       <a href={item.url}>{item.title} </a>
     </span>
-    <span>{item.author} </span>
-    <span>{item.num_comments} </span>
-    <span>{item.points}</span>
-    <span>
-      <button type="button" onClick={(): void => onRemoveItem(item)}>Dismiss</button>
+    <span style={{width: '30%'}}>{item.author} </span>
+    <span style={{width: '10%'}}>{item.num_comments} </span>
+    <span style={{width: '10%'}}>{item.points}</span>
+    <span style={{width: '10%'}}>
+      <button 
+      type="button" 
+      onClick={(): void => onRemoveItem(item)}
+      className="button button_small"
+      >
+        Dismiss
+      </button>
     </span>
   </li>
 );
@@ -166,7 +172,7 @@ const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, ch
 
   return (
     <>
-      <label htmlFor={id}>{children}</label>
+      <label htmlFor={id} className="label">{children}</label>
       &nbsp;
       <input
         ref={inputRef}
@@ -174,13 +180,14 @@ const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, ch
         type={type}
         value={value}
         onChange={onInputChange}
+        className="input"
       />
     </>
   );
 };
 
 const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormProps): ReactElement => (
-  <form onSubmit={onSearchSubmit}>
+  <form onSubmit={onSearchSubmit} className="search-form">
     <InputWithLabel
       id="search"
       value={searchTerm}
@@ -193,6 +200,7 @@ const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormPro
     <button
       type="submit"
       disabled={!searchTerm}
+      className="button button_large"
     >Submit</button>
   </form>
 );
