@@ -1,7 +1,8 @@
 import { PropsWithChildren, ReactElement, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { BookListItem, InputWithLabelProps, ItemProps, ListProps, SearchFormProps, StoryAction, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 import axios from "axios";
-import './App.css';
+import styles from './App.module.css';
+import clsx from "clsx";
 
 const API_ENDPOINT: string = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -110,9 +111,9 @@ const App = (): ReactElement => {
   };
 
   return (
-    <div className="container">
-      <h1 className="headline-primary">{welcome.greeting} {welcome.title}</h1>
-      <h1 className="headline-primary">{getTitle('Hello World')}</h1>
+    <div className={styles.container}>
+      <h1 className={styles.headlinePrimary}>{welcome.greeting} {welcome.title}</h1>
+      <h1 className={styles.headlinePrimary}>{getTitle('Hello World')}</h1>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -141,7 +142,7 @@ const List = ({ list, onRemoveItem }: ListProps): ReactElement => (
 );
 
 const Item = ({ item, onRemoveItem }: ItemProps): ReactElement => (
-  <li className="item">
+  <li className={styles.item}>
     <span style={{width: '40%'}}>
       <a href={item.url}>{item.title} </a>
     </span>
@@ -152,7 +153,7 @@ const Item = ({ item, onRemoveItem }: ItemProps): ReactElement => (
       <button 
       type="button" 
       onClick={(): void => onRemoveItem(item)}
-      className="button button_small"
+      className={clsx(styles.button, styles.buttonSmall)}
       >
         Dismiss
       </button>
@@ -172,7 +173,7 @@ const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, ch
 
   return (
     <>
-      <label htmlFor={id} className="label">{children}</label>
+      <label htmlFor={id} className={styles.label}>{children}</label>
       &nbsp;
       <input
         ref={inputRef}
@@ -180,14 +181,14 @@ const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, ch
         type={type}
         value={value}
         onChange={onInputChange}
-        className="input"
+        className={styles.input}
       />
     </>
   );
 };
 
 const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormProps): ReactElement => (
-  <form onSubmit={onSearchSubmit} className="search-form">
+  <form onSubmit={onSearchSubmit} className={styles.searchForm}>
     <InputWithLabel
       id="search"
       value={searchTerm}
@@ -200,7 +201,7 @@ const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormPro
     <button
       type="submit"
       disabled={!searchTerm}
-      className="button button_large"
+      className={clsx(styles.button, styles.buttonLarge)}
     >Submit</button>
   </form>
 );
