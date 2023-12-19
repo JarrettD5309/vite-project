@@ -37,6 +37,10 @@ interface StoryReducerObj {
   isError: boolean;
 }
 
+interface StyledColumnProps {
+  width: string;
+}
+
 interface WelcomeObj {
   greeting: string;
   title: string;
@@ -56,6 +60,7 @@ export {
   type InputWithLabelProps,
   type SearchFormProps,
   type StoryReducerObj,
+  type StyledColumnProps,
   type WelcomeObj,
   StoryAction
 };

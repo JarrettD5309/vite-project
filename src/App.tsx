@@ -1,8 +1,10 @@
 import { PropsWithChildren, ReactElement, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { BookListItem, InputWithLabelProps, ItemProps, ListProps, SearchFormProps, StoryAction, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 import axios from "axios";
-import styles from './App.module.css';
-import clsx from "clsx";
+import { StyledButtonLarge, StyledButtonSmall, StyledColumn, StyledContainer, StyledHeadlinePrimary, StyledInput, StyledItem, StyledLabel, StyledSearchForm } from "./styles/component_styles";
+import Check from "./assets/check.svg?react";
+
+
 
 const API_ENDPOINT: string = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -111,9 +113,9 @@ const App = (): ReactElement => {
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.headlinePrimary}>{welcome.greeting} {welcome.title}</h1>
-      <h1 className={styles.headlinePrimary}>{getTitle('Hello World')}</h1>
+    <StyledContainer>
+      <StyledHeadlinePrimary>{welcome.greeting} {welcome.title}</StyledHeadlinePrimary>
+      <StyledHeadlinePrimary>{getTitle('Hello World')}</StyledHeadlinePrimary>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -129,7 +131,7 @@ const App = (): ReactElement => {
         <List list={stories.data} onRemoveItem={handleRemoveStory} />
       )}
 
-    </div>
+    </StyledContainer>
   );
 };
 
@@ -142,23 +144,22 @@ const List = ({ list, onRemoveItem }: ListProps): ReactElement => (
 );
 
 const Item = ({ item, onRemoveItem }: ItemProps): ReactElement => (
-  <li className={styles.item}>
-    <span style={{width: '40%'}}>
+  <StyledItem>
+    <StyledColumn width="40%">
       <a href={item.url}>{item.title} </a>
-    </span>
-    <span style={{width: '30%'}}>{item.author} </span>
-    <span style={{width: '10%'}}>{item.num_comments} </span>
-    <span style={{width: '10%'}}>{item.points}</span>
-    <span style={{width: '10%'}}>
-      <button 
-      type="button" 
-      onClick={(): void => onRemoveItem(item)}
-      className={clsx(styles.button, styles.buttonSmall)}
+    </StyledColumn>
+    <StyledColumn width="30%">{item.author} </StyledColumn>
+    <StyledColumn width="10%">{item.num_comments} </StyledColumn>
+    <StyledColumn width="10%">{item.points}</StyledColumn>
+    <StyledColumn width="10%">
+      <StyledButtonSmall
+        type="button"
+        onClick={(): void => onRemoveItem(item)}
       >
-        Dismiss
-      </button>
-    </span>
-  </li>
+        <Check height="18px" width="18px" />
+      </StyledButtonSmall>
+    </StyledColumn>
+  </StyledItem>
 );
 
 const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, children }: PropsWithChildren<InputWithLabelProps>): ReactElement => {
@@ -173,22 +174,21 @@ const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, ch
 
   return (
     <>
-      <label htmlFor={id} className={styles.label}>{children}</label>
+    <StyledLabel htmlFor={id}>{children}</StyledLabel>
       &nbsp;
-      <input
+      <StyledInput
         ref={inputRef}
         id={id}
         type={type}
         value={value}
         onChange={onInputChange}
-        className={styles.input}
       />
     </>
   );
 };
 
 const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormProps): ReactElement => (
-  <form onSubmit={onSearchSubmit} className={styles.searchForm}>
+  <StyledSearchForm onSubmit={onSearchSubmit}>
     <InputWithLabel
       id="search"
       value={searchTerm}
@@ -198,12 +198,13 @@ const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormPro
       <strong>Search:</strong>
     </InputWithLabel>
 
-    <button
+    <StyledButtonLarge
       type="submit"
       disabled={!searchTerm}
-      className={clsx(styles.button, styles.buttonLarge)}
-    >Submit</button>
-  </form>
+    >
+      Submit
+    </StyledButtonLarge>
+  </StyledSearchForm>
 );
 
 export default App;
