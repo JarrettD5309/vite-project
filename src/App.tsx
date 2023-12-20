@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactElement, useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { PropsWithChildren, ReactElement, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { BookListItem, InputWithLabelProps, ItemProps, ListProps, SearchFormProps, StoryAction, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 import axios from "axios";
 import { StyledButtonLarge, StyledButtonSmall, StyledColumn, StyledContainer, StyledHeadlinePrimary, StyledInput, StyledItem, StyledLabel, StyledSearchForm } from "./styles/component_styles";
@@ -55,16 +55,27 @@ const storiesReducer = (state: StoryReducerObj, action: { type: StoryAction, pay
 };
 
 const useSemiPersistentState = (key: string, initialState: string): [string, React.Dispatch<React.SetStateAction<string>>] => {
+  const isMounted = useRef<boolean>(false);
+
   const [value, setValue] = useState<string>(
     localStorage.getItem(key) || initialState
   );
 
   useEffect(() => {
-    localStorage.setItem(key, value);
+    if (!isMounted.current) {
+      isMounted.current = true;
+    } else {
+      localStorage.setItem(key, value);
+    }
   }, [value, key]);
 
   return [value, setValue];
 };
+
+const getSumComments = (stories: StoryReducerObj): number => stories.data.reduce(
+  (result, value) => result + value.num_comments,
+  0
+);
 
 
 const App = (): ReactElement => {
@@ -105,17 +116,20 @@ const App = (): ReactElement => {
 
   }, [handleFetchStories]);
 
-  const handleRemoveStory = (item: BookListItem): void => {
+  const handleRemoveStory = useCallback((item: BookListItem): void => {
     dispatchStories({
       type: StoryAction.REMOVE_STORY,
       payload: [item]
     });
-  };
+  }, []);
+
+  const sumComments: number = useMemo<number>(() => getSumComments(stories), [stories]);
 
   return (
     <StyledContainer>
       <StyledHeadlinePrimary>{welcome.greeting} {welcome.title}</StyledHeadlinePrimary>
       <StyledHeadlinePrimary>{getTitle('Hello World')}</StyledHeadlinePrimary>
+      <StyledHeadlinePrimary>My Hacker Stories with {sumComments} comments.</StyledHeadlinePrimary>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -135,12 +149,15 @@ const App = (): ReactElement => {
   );
 };
 
-const List = ({ list, onRemoveItem }: ListProps): ReactElement => (
+const List = memo(({ list, onRemoveItem }: ListProps): ReactElement =>
+(
   <ul>
     {list.map((item: BookListItem): ReactElement => (
       <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
     ))}
   </ul>
+)
+
 );
 
 const Item = ({ item, onRemoveItem }: ItemProps): ReactElement => (
@@ -174,7 +191,7 @@ const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, ch
 
   return (
     <>
-    <StyledLabel htmlFor={id}>{children}</StyledLabel>
+      <StyledLabel htmlFor={id}>{children}</StyledLabel>
       &nbsp;
       <StyledInput
         ref={inputRef}
