@@ -28,7 +28,7 @@ interface InputWithLabelProps {
 interface SearchFormProps {
   searchTerm: string;
   onSearchInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearchSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void;
+  onSearchSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 interface StoryReducerObj {

@@ -54,7 +54,7 @@ const storiesReducer = (state: StoryReducerObj, action: { type: StoryAction, pay
   }
 };
 
-const useSemiPersistentState = (key: string, initialState: string): [string, React.Dispatch<React.SetStateAction<string>>] => {
+const useSemiPersistentState = (key: string, initialState: string): [string, (newValue: string) => void] => {
   const isMounted = useRef<boolean>(false);
 
   const [value, setValue] = useState<string>(
@@ -87,7 +87,7 @@ const App = (): ReactElement => {
 
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => setSearchTerm(event.target.value);
 
-  const handleSearchSubmit = (event: React.ChangeEvent<HTMLFormElement>): void => {
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
 
     event.preventDefault;
