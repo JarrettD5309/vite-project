@@ -31,6 +31,11 @@ interface SearchFormProps {
   onSearchSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
+interface StoryReducerActionObj {
+  type: StoryAction;
+  payload?: BookListItem[]
+}
+
 interface StoryReducerObj {
   data: BookListItem[];
   isLoading: boolean;
@@ -59,6 +64,7 @@ export {
   type ListProps,
   type InputWithLabelProps,
   type SearchFormProps,
+  type StoryReducerActionObj,
   type StoryReducerObj,
   type StyledColumnProps,
   type WelcomeObj,

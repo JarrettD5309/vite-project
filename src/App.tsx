@@ -1,5 +1,5 @@
 import { PropsWithChildren, ReactElement, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { BookListItem, InputWithLabelProps, ItemProps, ListProps, SearchFormProps, StoryAction, StoryReducerObj, WelcomeObj } from "./interfaces/types";
+import { BookListItem, InputWithLabelProps, ItemProps, ListProps, SearchFormProps, StoryAction, StoryReducerActionObj, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 import axios from "axios";
 import { StyledButtonLarge, StyledButtonSmall, StyledColumn, StyledContainer, StyledHeadlinePrimary, StyledInput, StyledItem, StyledLabel, StyledSearchForm } from "./styles/component_styles";
 import Check from "./assets/check.svg?react";
@@ -15,7 +15,7 @@ const welcome: WelcomeObj = {
 
 const getTitle = (title: string): string => title;
 
-const storiesReducer = (state: StoryReducerObj, action: { type: StoryAction, payload?: BookListItem[] }): StoryReducerObj => {
+const storiesReducer = (state: StoryReducerObj, action: StoryReducerActionObj): StoryReducerObj => {
   const actionType = action.type;
   if (actionType === StoryAction.STORIES_FETCH_INIT) {
     return {
@@ -225,3 +225,11 @@ const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormPro
 );
 
 export default App;
+
+export {
+  storiesReducer,
+  SearchForm,
+  InputWithLabel,
+  List,
+  Item
+};
