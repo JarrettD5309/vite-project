@@ -1,18 +1,16 @@
 import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
 
 import { BookListItem, StoryAction, StoryReducerActionObj, StoryReducerObj } from './interfaces/types.ts';
 
 import {
     storiesReducer,
     Item,
-    List,
-    SearchForm,
-    InputWithLabel
 } from './App.tsx';
 
 const storyOne: BookListItem = {
     title: 'React',
-    url: 'https://react.js.org/',
+    url: 'https://reactjs.org/',
     author: 'Jordan Walke',
     num_comments: 3,
     points: 4,
@@ -21,7 +19,7 @@ const storyOne: BookListItem = {
 
 const storyTwo: BookListItem = {
     title: 'Redux',
-    url: 'https://redux.js.org/',
+    url: 'https://reduxjs.org/',
     author: 'Dan Abramov, Andrew Clark',
     num_comments: 2,
     points: 5,
@@ -128,5 +126,23 @@ describe('storiesReducer', () => {
 
         expect(newState).toStrictEqual(expectedState);
 
+    });
+});
+
+describe('Item', () => {
+    it('renders all properties', () => {
+        render(<Item item={storyOne} onRemoveItem={(x) => x}/>);
+
+        expect(screen.getByText('Jordan Walke')).toBeInTheDocument();
+        expect(screen.getByText('React')).toHaveAttribute(
+            'href',
+            'https://reactjs.org/'
+        );
+    });
+
+    it('renders a clickable dismiss button', () => {
+        render(<Item item={storyOne} onRemoveItem={(x) => x}/>);
+
+        expect(screen.getByRole('button')).toBeInTheDocument();
     });
 });
