@@ -173,7 +173,7 @@ const Item = ({ item, onRemoveItem }: ItemProps): ReactElement => (
         type="button"
         onClick={(): void => onRemoveItem(item)}
       >
-        <Check height="18px" width="18px" />
+        <Check height="18px" width="18px" data-testid="check-svg"/>
       </StyledButtonSmall>
     </StyledColumn>
   </StyledItem>
