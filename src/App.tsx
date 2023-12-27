@@ -1,10 +1,9 @@
-import { PropsWithChildren, ReactElement, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { BookListItem, InputWithLabelProps, ItemProps, ListProps, SearchFormProps, StoryAction, StoryReducerActionObj, StoryReducerObj, WelcomeObj } from "./interfaces/types";
+import { ReactElement, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { BookListItem, StoryAction, StoryReducerActionObj, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 import axios from "axios";
-import { StyledButtonLarge, StyledButtonSmall, StyledColumn, StyledContainer, StyledHeadlinePrimary, StyledInput, StyledItem, StyledLabel, StyledSearchForm } from "./styles/component_styles";
-import Check from "./assets/check.svg?react";
-
-
+import { StyledContainer, StyledHeadlinePrimary } from "./styles/component_styles";
+import { SearchForm } from "./SearchForm";
+import { List } from "./List"; 
 
 const API_ENDPOINT: string = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -149,87 +148,8 @@ const App = (): ReactElement => {
   );
 };
 
-const List = memo(({ list, onRemoveItem }: ListProps): ReactElement =>
-(
-  <ul>
-    {list.map((item: BookListItem): ReactElement => (
-      <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-    ))}
-  </ul>
-)
-
-);
-
-const Item = ({ item, onRemoveItem }: ItemProps): ReactElement => (
-  <StyledItem>
-    <StyledColumn width="40%">
-      <a href={item.url}>{item.title} </a>
-    </StyledColumn>
-    <StyledColumn width="30%">{item.author} </StyledColumn>
-    <StyledColumn width="10%">{item.num_comments} </StyledColumn>
-    <StyledColumn width="10%">{item.points}</StyledColumn>
-    <StyledColumn width="10%">
-      <StyledButtonSmall
-        type="button"
-        onClick={(): void => onRemoveItem(item)}
-      >
-        <Check height="18px" width="18px" data-testid="check-svg"/>
-      </StyledButtonSmall>
-    </StyledColumn>
-  </StyledItem>
-);
-
-const InputWithLabel = ({ id, value, isFocused, type = "text", onInputChange, children }: PropsWithChildren<InputWithLabelProps>): ReactElement => {
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isFocused && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isFocused]);
-
-  return (
-    <>
-      <StyledLabel htmlFor={id}>{children}</StyledLabel>
-      &nbsp;
-      <StyledInput
-        ref={inputRef}
-        id={id}
-        type={type}
-        value={value}
-        onChange={onInputChange}
-      />
-    </>
-  );
-};
-
-const SearchForm = ({ onSearchSubmit, searchTerm, onSearchInput }: SearchFormProps): ReactElement => (
-  <StyledSearchForm onSubmit={onSearchSubmit}>
-    <InputWithLabel
-      id="search"
-      value={searchTerm}
-      isFocused
-      onInputChange={onSearchInput}
-    >
-      Search:
-    </InputWithLabel>
-
-    <StyledButtonLarge
-      type="submit"
-      disabled={!searchTerm}
-    >
-      Submit
-    </StyledButtonLarge>
-  </StyledSearchForm>
-);
-
 export default App;
 
 export {
-  storiesReducer,
-  SearchForm,
-  InputWithLabel,
-  List,
-  Item
+  storiesReducer
 };

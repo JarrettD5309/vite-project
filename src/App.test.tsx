@@ -5,10 +5,10 @@ import axios from 'axios';
 import { BookListItem, SearchFormProps, StoryAction, StoryReducerActionObj, StoryReducerObj } from './interfaces/types.ts';
 
 import App, {
-    storiesReducer,
-    Item,
-    SearchForm,
+    storiesReducer
 } from './App.tsx';
+import { SearchForm } from './SearchForm.tsx';
+import { Item } from './List.tsx';
 
 vi.mock('axios');
 
