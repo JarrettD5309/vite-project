@@ -199,9 +199,21 @@ describe('SearchForm', () => {
 
         expect(SearchFormProps.onSearchSubmit).toHaveBeenCalledTimes(1);
     });
+
+    it('renders snapshot', () => {
+        const { container } = render(<SearchForm {...SearchFormProps} />);
+
+        expect(container.firstChild).toMatchSnapshot();
+    });
 });
 
 describe('App', () => {
+    it('renders snapshot', () => {
+        const { container } = render(<App />);
+
+        expect(container.firstChild).toMatchSnapshot();
+    });
+
     it('succeeds fetching data', async () => {
         const promise = Promise.resolve({
             data: {
