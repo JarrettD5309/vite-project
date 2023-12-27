@@ -1,9 +1,9 @@
 import { ReactElement, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { BookListItem, StoryAction, StoryReducerActionObj, StoryReducerObj, WelcomeObj } from "./interfaces/types";
+import { BookListItem, ColName, StoryAction, StoryReducerActionObj, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 import axios from "axios";
 import { StyledContainer, StyledHeadlinePrimary } from "./styles/component_styles";
 import { SearchForm } from "./SearchForm";
-import { List } from "./List"; 
+import { List } from "./List";
 
 const API_ENDPOINT: string = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -47,6 +47,11 @@ const storiesReducer = (state: StoryReducerObj, action: StoryReducerActionObj): 
     return {
       ...state,
       data: state.data.filter(storyFilter)
+    };
+  } else if (action.payload && StoryAction.SORT_ASCEND) {
+    return {
+      ...state,
+      data: action.payload
     };
   } else {
     throw new Error();
@@ -122,6 +127,34 @@ const App = (): ReactElement => {
     });
   }, []);
 
+  const handleSortAscend = (col: ColName): void => {
+    const storyArr = [...stories.data];
+
+    storyArr.sort((a: BookListItem, b: BookListItem) => {
+      let aVal: string | number = a[col];
+      let bVal: string | number = b[col];
+      
+      if (typeof aVal === 'string') {
+        aVal = aVal.toLowerCase();
+      }
+
+      if (typeof bVal === 'string') {
+        bVal = bVal.toLowerCase();
+      }
+
+      if (aVal < bVal) {
+        return -1;
+      } else if (aVal > bVal) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    dispatchStories({ type: StoryAction.SORT_ASCEND, payload: storyArr });
+  };
+
+
   const sumComments: number = useMemo<number>(() => getSumComments(stories), [stories]);
 
   return (
@@ -141,7 +174,7 @@ const App = (): ReactElement => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={stories.data} onRemoveItem={handleRemoveStory} />
+        <List list={stories.data} onRemoveItem={handleRemoveStory} onSortAscend={handleSortAscend} />
       )}
 
     </StyledContainer>

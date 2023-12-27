@@ -87,6 +87,13 @@ const StyledSearchForm = styled.form`
   align-items: baseline;
 `;
 
+const StyledSpan = styled.span`
+  cursor: pointer;
+  &:hover {
+    color: blue;
+  }
+`;
+
 export { 
     StyledButtonSmall,
     StyledButtonLarge,
@@ -96,5 +103,6 @@ export {
     StyledInput,
     StyledItem,
     StyledLabel,
-    StyledSearchForm
+    StyledSearchForm,
+    StyledSpan
 };

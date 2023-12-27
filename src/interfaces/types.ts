@@ -15,6 +15,11 @@ interface ItemProps {
 interface ListProps {
   list: BookListItem[];
   onRemoveItem: (item: BookListItem) => void;
+  onSortAscend: (col: ColName) => void;
+}
+
+interface ListTitleProps {
+  onSortAscend: (col: ColName) => void;
 }
 
 interface InputWithLabelProps {
@@ -51,8 +56,16 @@ interface WelcomeObj {
   title: string;
 }
 
+enum ColName {
+  TITLE = 'title',
+  AUTHOR = 'author',
+  COMMENTS = 'num_comments',
+  POINTS = 'points'
+}
+
 enum StoryAction {
   REMOVE_STORY = 'REMOVE_STORY',
+  SORT_ASCEND = 'SORT_ASCEND',
   STORIES_FETCH_INIT = 'STORIES_FETCH_INIT',
   STORIES_FETCH_FAILURE = 'STORIES_FETCH_FAILURE',
   STORIES_FETCH_SUCCESS = 'STORIES_FETCH_SUCCESS'
@@ -62,11 +75,13 @@ export {
   type BookListItem,
   type ItemProps,
   type ListProps,
+  type ListTitleProps,
   type InputWithLabelProps,
   type SearchFormProps,
   type StoryReducerActionObj,
   type StoryReducerObj,
   type StyledColumnProps,
   type WelcomeObj,
-  StoryAction
+  StoryAction,
+  ColName
 };
