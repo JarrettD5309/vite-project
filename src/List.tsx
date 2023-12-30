@@ -4,10 +4,10 @@ import { StyledButtonSmall, StyledColumn, StyledItem, StyledSpan } from "./style
 import Check from "./assets/check.svg?react";
 
 
-const List = memo(({ list, onRemoveItem, onSortAscend }: ListProps): ReactElement =>
+const List = memo(({ list, onRemoveItem, onSortAscendDescend }: ListProps): ReactElement =>
 (
   <ul>
-    <ListTitle onSortAscend={onSortAscend} />
+    <ListTitle onSortAscendDescend={onSortAscendDescend} />
     {list.map((item: BookListItem): ReactElement => (
       <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
     ))}
@@ -15,14 +15,14 @@ const List = memo(({ list, onRemoveItem, onSortAscend }: ListProps): ReactElemen
 )
 );
 
-const ListTitle = ({ onSortAscend }: ListTitleProps): ReactElement => (
+const ListTitle = ({ onSortAscendDescend }: ListTitleProps): ReactElement => (
   <StyledItem>
     <StyledColumn width="40%">
-      Article <StyledSpan>&darr;</StyledSpan> <StyledSpan onClick={() => onSortAscend(ColName.TITLE)}>&uarr;</StyledSpan>
+      Article <StyledSpan onClick={() => onSortAscendDescend(ColName.TITLE)}>&#9670;</StyledSpan>
     </StyledColumn>
-    <StyledColumn width="25%">Author <StyledSpan>&darr;</StyledSpan> <StyledSpan onClick={() => onSortAscend(ColName.AUTHOR)}>&uarr;</StyledSpan></StyledColumn>
-    <StyledColumn width="15%">Comments <StyledSpan>&darr;</StyledSpan> <StyledSpan onClick={() => onSortAscend(ColName.COMMENTS)}>&uarr;</StyledSpan></StyledColumn>
-    <StyledColumn width="10%">Points <StyledSpan>&darr;</StyledSpan> <StyledSpan onClick={() => onSortAscend(ColName.POINTS)}>&uarr;</StyledSpan></StyledColumn>
+    <StyledColumn width="25%">Author <StyledSpan onClick={() => onSortAscendDescend(ColName.AUTHOR)}>&#9670;</StyledSpan></StyledColumn>
+    <StyledColumn width="15%">Comments <StyledSpan onClick={() => onSortAscendDescend(ColName.COMMENTS)}>&#9670;</StyledSpan></StyledColumn>
+    <StyledColumn width="10%">Points <StyledSpan onClick={() => onSortAscendDescend(ColName.POINTS)}>&#9670;</StyledSpan></StyledColumn>
     <StyledColumn width="10%">Remove</StyledColumn>
   </StyledItem>
 );

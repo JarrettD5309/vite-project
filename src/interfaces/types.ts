@@ -15,11 +15,11 @@ interface ItemProps {
 interface ListProps {
   list: BookListItem[];
   onRemoveItem: (item: BookListItem) => void;
-  onSortAscend: (col: ColName) => void;
+  onSortAscendDescend: (col: ColName) => void;
 }
 
 interface ListTitleProps {
-  onSortAscend: (col: ColName) => void;
+  onSortAscendDescend: (col: ColName) => void;
 }
 
 interface InputWithLabelProps {
@@ -65,7 +65,7 @@ enum ColName {
 
 enum StoryAction {
   REMOVE_STORY = 'REMOVE_STORY',
-  SORT_ASCEND = 'SORT_ASCEND',
+  SORT_ASCEND_DESCEND = 'SORT_ASCEND_DESCEND',
   STORIES_FETCH_INIT = 'STORIES_FETCH_INIT',
   STORIES_FETCH_FAILURE = 'STORIES_FETCH_FAILURE',
   STORIES_FETCH_SUCCESS = 'STORIES_FETCH_SUCCESS'

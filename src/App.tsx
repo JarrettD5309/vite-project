@@ -48,7 +48,7 @@ const storiesReducer = (state: StoryReducerObj, action: StoryReducerActionObj): 
       ...state,
       data: state.data.filter(storyFilter)
     };
-  } else if (action.payload && StoryAction.SORT_ASCEND) {
+  } else if (action.payload && StoryAction.SORT_ASCEND_DESCEND) {
     return {
       ...state,
       data: action.payload
@@ -127,13 +127,13 @@ const App = (): ReactElement => {
     });
   }, []);
 
-  const handleSortAscend = (col: ColName): void => {
-    const storyArr = [...stories.data];
+  const sortAscendDescend = (col: ColName): BookListItem[] => {
+    const storyArr: BookListItem[] = [...stories.data];
 
     storyArr.sort((a: BookListItem, b: BookListItem) => {
       let aVal: string | number = a[col];
       let bVal: string | number = b[col];
-      
+
       if (typeof aVal === 'string') {
         aVal = aVal.toLowerCase();
       }
@@ -151,7 +151,28 @@ const App = (): ReactElement => {
       }
     });
 
-    dispatchStories({ type: StoryAction.SORT_ASCEND, payload: storyArr });
+    return storyArr;
+  };
+
+  const arrAreEqual = (arr1: BookListItem[], arr2: BookListItem[], col: ColName): boolean => {
+    let isEqual = true;
+    arr1.forEach((arrOneVal, i) => {
+      if(arrOneVal[col] !== arr2[i][col]) {
+        isEqual = false;
+      }
+    });
+
+    return isEqual;
+  };
+
+  const handleSortAscendDescend = (col: ColName): void => {
+    const storyArr: BookListItem[] = sortAscendDescend(col);
+
+    if (arrAreEqual(storyArr, stories.data, col)) {
+      storyArr.reverse();
+    }
+
+    dispatchStories({ type: StoryAction.SORT_ASCEND_DESCEND, payload: storyArr });
   };
 
 
@@ -174,7 +195,7 @@ const App = (): ReactElement => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={stories.data} onRemoveItem={handleRemoveStory} onSortAscend={handleSortAscend} />
+        <List list={stories.data} onRemoveItem={handleRemoveStory} onSortAscendDescend={handleSortAscendDescend} />
       )}
 
     </StyledContainer>
