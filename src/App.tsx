@@ -4,6 +4,7 @@ import axios from "axios";
 import { StyledContainer, StyledHeadlinePrimary } from "./styles/component_styles";
 import { SearchForm } from "./SearchForm";
 import { List } from "./List";
+import { LastSearch } from "./LastSearch";
 
 const API_ENDPOINT: string = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -87,15 +88,28 @@ const App = (): ReactElement => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
   const [stories, dispatchStories] = useReducer(storiesReducer, { data: [], isLoading: false, isError: false });
 
+  const [pastSearchArr, setPastSearchArr] = useState<string[]>([]);
+
   const [url, setUrl] = useState(`${API_ENDPOINT}${searchTerm}`);
 
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => setSearchTerm(event.target.value);
 
-  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement> ): void => {
+
     setUrl(`${API_ENDPOINT}${searchTerm}`);
 
-    event.preventDefault;
+    if(pastSearchArr.indexOf(searchTerm) === -1 && pastSearchArr.length === 5) {
+      const arrShift = [...pastSearchArr];
+      arrShift.shift();
+      setPastSearchArr([...arrShift, searchTerm]);
+    } else if (pastSearchArr.indexOf(searchTerm) === -1) {
+      setPastSearchArr([...pastSearchArr, searchTerm]);
+    }
+
+    event.preventDefault();
   };
+
+  const handlePreviousSearch = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, pastTerm: string): void => setUrl(`${API_ENDPOINT}${pastTerm}`);
 
   const handleFetchStories = useCallback(async () => {
 
@@ -157,7 +171,7 @@ const App = (): ReactElement => {
   const arrAreEqual = (arr1: BookListItem[], arr2: BookListItem[], col: ColName): boolean => {
     let isEqual = true;
     arr1.forEach((arrOneVal, i) => {
-      if(arrOneVal[col] !== arr2[i][col]) {
+      if (arrOneVal[col] !== arr2[i][col]) {
         isEqual = false;
       }
     });
@@ -189,6 +203,8 @@ const App = (): ReactElement => {
         onSearchInput={handleSearchInput}
         onSearchSubmit={handleSearchSubmit}
       />
+
+      {pastSearchArr && <LastSearch pastSearchArr={pastSearchArr} setSearchTerm={setSearchTerm} handlePreviousSearch={handlePreviousSearch}/>}
 
       {stories.isError && <p>Something went wrong...</p>}
 

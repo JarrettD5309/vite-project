@@ -30,6 +30,12 @@ interface InputWithLabelProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+interface LastSearchProps {
+  pastSearchArr: string[];
+  setSearchTerm: (newVal: string) => void;
+  handlePreviousSearch: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, pastTerm: string) => void;
+}
+
 interface SearchFormProps {
   searchTerm: string;
   onSearchInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -77,6 +83,7 @@ export {
   type ListProps,
   type ListTitleProps,
   type InputWithLabelProps,
+  type LastSearchProps,
   type SearchFormProps,
   type StoryReducerActionObj,
   type StoryReducerObj,
