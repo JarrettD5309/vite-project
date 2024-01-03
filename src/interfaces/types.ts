@@ -33,7 +33,7 @@ interface InputWithLabelProps {
 interface LastSearchProps {
   pastSearchArr: string[];
   setSearchTerm: (newVal: string) => void;
-  handlePreviousSearch: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, pastTerm: string) => void;
+  handlePreviousSearch: (pastTerm: string) => void;
 }
 
 interface SearchFormProps {

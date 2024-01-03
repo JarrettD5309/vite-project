@@ -125,7 +125,7 @@ const App = (): ReactElement => {
     event.preventDefault();
   };
 
-  const handlePreviousSearch = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, pastTerm: string): void => setUrl(`${API_ENDPOINT}${pastTerm}`);
+  const handlePreviousSearch = (pastTerm: string): void => setUrl(`${API_ENDPOINT}${pastTerm}`);
 
   const handleFetchStories = useCallback(async () => {
 
