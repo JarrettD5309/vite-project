@@ -1,7 +1,7 @@
 import { ReactElement, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { BookListItem, ColName, StoryAction, StoryReducerActionObj, StoryReducerObj, WelcomeObj } from "./interfaces/types";
 import axios from "axios";
-import { StyledContainer, StyledHeadlinePrimary } from "./styles/component_styles";
+import { StyledButtonLarge, StyledContainer, StyledHeadlinePrimary } from "./styles/component_styles";
 import { SearchForm } from "./SearchForm";
 import { List } from "./List";
 import { LastSearch } from "./LastSearch";
@@ -29,6 +29,13 @@ const storiesReducer = (state: StoryReducerObj, action: StoryReducerActionObj): 
       isLoading: false,
       isError: false,
       data: action.payload
+    };
+  } else if (action.payload && actionType === StoryAction.STORIES_FETCH_MORE_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      isError: false,
+      data: state.data.concat(action.payload)
     };
   } else if (actionType === StoryAction.STORIES_FETCH_FAILURE) {
     return {
@@ -92,13 +99,22 @@ const App = (): ReactElement => {
 
   const [url, setUrl] = useState(`${API_ENDPOINT}${searchTerm}`);
 
+  const [searchPage, setSearchPage] = useState(0);
+
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>): void => setSearchTerm(event.target.value);
 
-  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement> ): void => {
+  const handleSearchMore = (): void => {
+    const incSearchPage = searchPage + 1;
+    setUrl(`${API_ENDPOINT}${searchTerm}&page=${incSearchPage}`);
+    setSearchPage(incSearchPage);
+  };
+
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
 
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+    setSearchPage(0);
 
-    if(pastSearchArr.indexOf(searchTerm) === -1 && pastSearchArr.length === 5) {
+    if (pastSearchArr.indexOf(searchTerm) === -1 && pastSearchArr.length === 5) {
       const arrShift = [...pastSearchArr];
       arrShift.shift();
       setPastSearchArr([...arrShift, searchTerm]);
@@ -118,10 +134,18 @@ const App = (): ReactElement => {
     try {
       const result = await axios.get(url);
 
-      dispatchStories({
-        type: StoryAction.STORIES_FETCH_SUCCESS,
-        payload: result.data.hits
-      });
+      if (searchPage) {
+        dispatchStories({
+          type: StoryAction.STORIES_FETCH_MORE_SUCCESS,
+          payload: result.data.hits
+        });
+      } else {
+        dispatchStories({
+          type: StoryAction.STORIES_FETCH_SUCCESS,
+          payload: result.data.hits
+        });
+      }
+
     } catch {
       dispatchStories({ type: StoryAction.STORIES_FETCH_FAILURE });
     }
@@ -204,14 +228,20 @@ const App = (): ReactElement => {
         onSearchSubmit={handleSearchSubmit}
       />
 
-      {pastSearchArr && <LastSearch pastSearchArr={pastSearchArr} setSearchTerm={setSearchTerm} handlePreviousSearch={handlePreviousSearch}/>}
+      {pastSearchArr && <LastSearch pastSearchArr={pastSearchArr} setSearchTerm={setSearchTerm} handlePreviousSearch={handlePreviousSearch} />}
 
       {stories.isError && <p>Something went wrong...</p>}
+
+
+      <List list={stories.data} onRemoveItem={handleRemoveStory} onSortAscendDescend={handleSortAscendDescend} />
+
 
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={stories.data} onRemoveItem={handleRemoveStory} onSortAscendDescend={handleSortAscendDescend} />
+        <StyledButtonLarge type="button" onClick={handleSearchMore}>
+          More
+        </StyledButtonLarge>
       )}
 
     </StyledContainer>
